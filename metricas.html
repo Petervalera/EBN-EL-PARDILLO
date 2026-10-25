@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Métricas y Estadísticas - C.E. Guaicaipuro</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Librería para Exportar a Excel -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- Librerías para Generar PDF con Formatos Especiales -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.8); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.4); border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 md:p-8 custom-scrollbar">
+
+  <!-- Header Institucional con Botón de Regreso y Controles de Período -->
+  <header class="max-w-7xl mx-auto mb-8 flex flex-col lg:flex-row items-center justify-between gap-4 pb-6 border-b border-blue-900/40">
+    
+    <div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+      <a href="index.html" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-xl text-xs font-semibold transition flex items-center gap-2">
+        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Volver al Menú
+      </a>
+
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-extrabold text-xl">
+          CEG
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold text-slate-100">Panel de Métricas y Control Total</h1>
+          <p class="text-xs text-blue-400">Indicadores, Gráficos Interactivos, Turnos y Exportación Oficial</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controles Rápidos de Período -->
+    <div class="flex flex-wrap items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-800">
+      <button onclick="cambiarPeriodo('diario', this)" id="btnDiario" class="btn-periodo px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white">Hoy</button>
+      <button onclick="cambiarPeriodo('semanal', this)" class="btn-periodo px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">Semana</button>
+      <button onclick="cambiarPeriodo('mensual', this)" class="btn-periodo px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">Mes</button>
+      <button onclick="cambiarPeriodo('anual', this)" class="btn-periodo px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">Año</button>
+      
+      <div class="h-4 w-px bg-slate-700 mx-1 hidden sm:block"></div>
+
+      <div class="flex items-center gap-1 text-xs text-slate-300">
+        <span class="text-[10px] text-blue-400 font-bold uppercase">Desde:</span>
+        <input type="date" id="inputFechaInicio" class="bg-slate-950 text-slate-200 border border-slate-700 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-blue-500">
+      </div>
+      <div class="flex items-center gap-1 text-xs text-slate-300">
+        <span class="text-[10px] text-blue-400 font-bold uppercase">Hasta:</span>
+        <input type="date" id="inputFechaFin" class="bg-slate-950 text-slate-200 border border-slate-700 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-blue-500">
+      </div>
+      <button onclick="cargarMetricas()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition">Consultar</button>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto space-y-8">
+
+    <!-- METRICAS GENERALES GLOBALES (KPIS) -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="glass-card p-5 rounded-2xl border-l-4 border-l-blue-500">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Personas Registradas</span>
+        <p id="kpiTotalPersonas" class="text-2xl font-extrabold text-slate-100 mt-1">0</p>
+        <span class="text-[10px] text-blue-400 mt-2 block">Base de datos general</span>
+      </div>
+
+      <div class="glass-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Asistencias en Período</span>
+        <p id="kpiTotalAsistencias" class="text-2xl font-extrabold text-emerald-400 mt-1">0</p>
+        <span class="text-[10px] text-slate-400 mt-2 block">Movimientos detectados 🟢</span>
+      </div>
+
+      <div class="glass-card p-5 rounded-2xl border-l-4 border-l-fuchsia-500">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Notas Procesadas</span>
+        <p id="kpiTotalNotas" class="text-2xl font-extrabold text-fuchsia-400 mt-1">0</p>
+        <span class="text-[10px] text-slate-400 mt-2 block">Evaluaciones guardadas 📚</span>
+      </div>
+
+      <div class="glass-card p-5 rounded-2xl border-l-4 border-l-amber-500">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Promedio Institucional</span>
+        <p id="kpiPromedioGeneral" class="text-2xl font-extrabold text-amber-400 mt-1">0.0</p>
+        <span class="text-[10px] text-slate-400 mt-2 block">Rendimiento global ⭐</span>
+      </div>
+    </section>
+
+    <!-- SECCIÓN DE ROLES INTERACTIVOS Y AUDITORÍA -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Asistencia de Personal y Estudiantes por Rol -->
+      <div class="glass-card p-6 rounded-2xl lg:col-span-2 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-extrabold uppercase text-blue-400 tracking-wider">Asistencia por Rol (Período Seleccionado)</h3>
+            <span class="text-[11px] text-slate-400">💡 Clic en tarjeta para filtrar tabla</span>
+          </div>
+          <div id="contenedorAsistenciaRoles" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <!-- Cargado dinámicamente -->
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between">
+          <span>Filtro activo en tabla:</span>
+          <span id="txtRolActivoBadge" class="font-bold text-blue-400 uppercase">TODOS</span>
+        </div>
+      </div>
+
+      <!-- Auditoría Puntual -->
+      <div class="glass-card p-6 rounded-2xl">
+        <h3 class="text-sm font-extrabold uppercase text-fuchsia-400 tracking-wider mb-3">🔍 Auditoría Puntual: ¿Asistió el Día X?</h3>
+        <div class="space-y-2 mb-3">
+          <div>
+            <label class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Fecha a Consultar:</label>
+            <input type="date" id="inputFechaConsultaDiaX" class="w-full bg-slate-950 text-slate-200 border border-slate-800 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-fuchsia-500">
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Cédula o Nombre:</label>
+            <input type="text" id="inputBusquedaDiaX" placeholder="Cédula o Nombre..." class="w-full bg-slate-950 text-slate-200 border border-slate-800 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-fuchsia-500">
+          </div>
+        </div>
+        <button onclick="verificarAsistenciaDiaX()" class="w-full py-2 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-xs font-bold transition mb-3">Consultar Asistencia</button>
+        
+        <div id="resultadoDiaX" class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs text-slate-300 min-h-[70px]">
+          <p class="text-slate-500 text-[11px]">Ingrese fecha y persona para verificar asistencia exacta.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SECCIÓN DE GRÁFICAS ESTADÍSTICAS VISUALES EXPORTABLES -->
+    <section class="glass-card p-6 rounded-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-extrabold uppercase text-emerald-400 tracking-wider">📈 Gráficas Estadísticas de Asistencia y Turnos</h3>
+        <span class="text-[11px] text-slate-400">Representación visual interactiva en tiempo real</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Gráfica de Barras por Rol -->
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-3">
+          <span class="text-xs font-bold text-slate-200 block">Distribución de Asistencia por Rol</span>
+          <div id="graficaRoles" class="space-y-2">
+            <!-- Renderizado dinámico de barras -->
+          </div>
+        </div>
+
+        <!-- Gráfica de Barras por Turno -->
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-3">
+          <span class="text-xs font-bold text-slate-200 block">Asistencia Global por Turno</span>
+          <div id="graficaTurnos" class="space-y-2">
+            <!-- Renderizado dinámico de barras -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANÁLISIS DETALLADO DE TURNOS (MAÑANA, TARDE, NOCTURNO) -->
+    <section class="glass-card p-6 rounded-2xl space-y-4">
+      <h3 class="text-sm font-extrabold uppercase text-emerald-400 tracking-wider">📊 Análisis por Turno (Mañana / Tarde / Nocturno) desglosado por Grado, Sección y Sexo</h3>
+      <div id="contenedorAnalisisTurnos" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <p class="text-slate-500 col-span-3">Cargando turnos...</p>
+      </div>
+    </section>
+
+    <!-- TABLA DE ASISTENCIA DETALLADA -->
+    <section class="glass-card rounded-2xl p-6 shadow-2xl">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between border-b border-slate-800 pb-4 mb-6 gap-4">
+        
+        <div class="flex items-center gap-3">
+          <h3 class="text-sm font-extrabold uppercase text-blue-400 tracking-wider">Registros de Asistencia</h3>
+          <button onclick="filtrarPorRol('todos')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[10px] font-bold transition">Ver Todos</button>
+        </div>
+
+        <!-- Botones de Acción (Exportar) -->
+        <div class="flex items-center gap-2">
+          <button onclick="exportarExcel()" class="px-3.5 py-1.5 bg-emerald-950 text-emerald-300 border border-emerald-800 rounded-lg text-xs font-semibold hover:bg-emerald-900 transition flex items-center gap-1.5">
+            📊 Excel Completo con Gráficas
+          </button>
+          <button onclick="exportarPDFOficial()" class="px-3.5 py-1.5 bg-rose-950 text-rose-300 border border-rose-800 rounded-lg text-xs font-semibold hover:bg-rose-900 transition flex items-center gap-1.5">
+            📄 Generar PDF Oficial con Resumen
+          </button>
+          <button onclick="cargarMetricas()" class="px-3.5 py-1.5 bg-blue-950 text-blue-300 border border-blue-800 rounded-lg text-xs font-semibold hover:bg-blue-900 transition">
+            🔄
+          </button>
+        </div>
+      </div>
+
+      <!-- TABLA DETALLADA DE MOVIMIENTOS -->
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-900/90 text-blue-400 uppercase font-semibold border-b border-blue-900/50">
+            <tr>
+              <th class="p-3">Fecha y Hora</th>
+              <th class="p-3">Nombre y Apellido</th>
+              <th class="p-3">Cédula</th>
+              <th class="p-3">Grado / Sección</th>
+              <th class="p-3">Turno</th>
+              <th class="p-3">Movimiento</th>
+              <th class="p-3">Estado Semáforo</th>
+            </tr>
+          </thead>
+          <tbody id="tablaMetricas" class="divide-y divide-slate-800/80">
+            <tr>
+              <td colspan="7" class="p-4 text-center text-slate-500">Cargando métricas...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const SUPABASE_URL = "https://dampbjspktpcffqpuiuz.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_raLpaXN3c1UpS4mHFvWkTQ_YNbtB3Q5";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let rolFiltroActual = 'todos';
+    let datosAsistencia = [];
+    let datosPersonas = [];
+    let datosNotas = [];
+
+    window.addEventListener('load', () => {
+      establecerFecha('diario');
+      document.getElementById('inputFechaConsultaDiaX').valueAsDate = new Date();
+    });
+
+    function cambiarPeriodo(periodo, btn) {
+      document.querySelectorAll('.btn-periodo').forEach(b => b.className = "btn-periodo px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white");
+      if (btn) btn.className = "btn-periodo px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white";
+      establecerFecha(periodo);
+    }
+
+    function establecerFecha(tipo) {
+      const hoy = new Date();
+      let inicio = new Date();
+      let fin = new Date();
+
+      if (tipo === 'diario') {
+        inicio.setHours(0, 0, 0, 0);
+        fin.setHours(23, 59, 59, 999);
+      } else if (tipo === 'semanal') {
+        inicio.setDate(hoy.getDate() - 7);
+      } else if (tipo === 'mensual') {
+        inicio.setDate(hoy.getDate() - 30);
+      } else if (tipo === 'anual') {
+        inicio = new Date(hoy.getFullYear(), 0, 1);
+        fin = new Date(hoy.getFullYear(), 11, 31, 23, 59, 59);
+      }
+
+      document.getElementById('inputFechaInicio').valueAsDate = inicio;
+      document.getElementById('inputFechaFin').valueAsDate = fin;
+      cargarMetricas();
+    }
+
+    async function cargarMetricas() {
+      const tbody = document.getElementById('tablaMetricas');
+      tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Sincronizando base de datos...</td></tr>';
+
+      const valInicio = document.getElementById('inputFechaInicio').value;
+      const valFin = document.getElementById('inputFechaFin').value;
+
+      let fechaInicio = valInicio ? new Date(valInicio + 'T00:00:00') : new Date(new Date().setHours(0,0,0,0));
+      let fechaFin = valFin ? new Date(valFin + 'T23:59:59') : new Date();
+
+      try {
+        const [resAsistencia, resPersonas, resNotas] = await Promise.all([
+          _supabase.from('asistencia').select('*').gte('fecha_hora', fechaInicio.toISOString()).lte('fecha_hora', fechaFin.toISOString()).order('id', { ascending: false }),
+          _supabase.from('registro_general').select('*'),
+          _supabase.from('notas').select('*')
+        ]);
+
+        if (resAsistencia.error) throw resAsistencia.error;
+
+        datosAsistencia = resAsistencia.data || [];
+        datosPersonas = resPersonas.data || [];
+        datosNotas = resNotas.data || [];
+
+        // KPIs Globales
+        document.getElementById('kpiTotalPersonas').innerText = datosPersonas.length;
+        document.getElementById('kpiTotalAsistencias').innerText = datosAsistencia.length;
+        document.getElementById('kpiTotalNotas').innerText = datosNotas.length;
+
+        if (datosNotas.length > 0) {
+          const definitivas = datosNotas.map(n => n.promedio_final !== undefined && n.promedio_final !== null ? n.promedio_final : n.nota).filter(n => n !== null && !isNaN(n));
+          const promedioGen = definitivas.length > 0 ? (definitivas.reduce((a, b) => a + b, 0) / definitivas.length).toFixed(1) : "0.0";
+          document.getElementById('kpiPromedioGeneral').innerText = promedioGen;
+        } else {
+          document.getElementById('kpiPromedioGeneral').innerText = "0.0";
+        }
+
+        renderizarAsistenciaPorRoles();
+        renderizarGraficasEstadisticas();
+        renderizarAnalisisTurnos();
+        renderizarTablaAsistencia();
+
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-rose-400">Error al consultar datos (${err.message}).</td></tr>`;
+      }
+    }
+
+    // TARJETAS DE ROL INTERACTIVAS
+    function renderizarAsistenciaPorRoles() {
+      const contenedor = document.getElementById('contenedorAsistenciaRoles');
+      contenedor.innerHTML = '';
+
+      const rolesDefinidos = [
+        { key: 'estudiante', nombre: '🎓 Estudiantes' },
+        { key: 'docente', nombre: '👨‍🏫 Docentes' },
+        { key: 'obrero', nombre: '🛠️ Obreros' },
+        { key: 'cocina', nombre: '🍳 Cocina/CNAE' },
+        { key: 'administrativo', nombre: '💼 Adm./Directivo' }
+      ];
+
+      rolesDefinidos.forEach(r => {
+        const personasRol = datosPersonas.filter(p => {
+          const rolP = (p.rol || p.grado || '').toLowerCase();
+          return rolP.includes(r.key) || (r.key === 'estudiante' && (rolP.includes('año') || rolP.includes('grado') || rolP.includes('alumno')));
+        });
+
+        const cedulasRol = new Set(personasRol.map(p => p.cedula));
+        const asistenciasRol = datosAsistencia.filter(a => cedulasRol.has(a.cedula));
+
+        const isActive = rolFiltroActual === r.key;
+        const btnClass = isActive 
+          ? "bg-blue-600/30 border-blue-500 shadow-lg shadow-blue-900/40 ring-2 ring-blue-500/50" 
+          : "bg-slate-900/60 hover:bg-slate-800 border-slate-800 hover:border-slate-700";
+
+        const div = document.createElement('div');
+        div.className = `${btnClass} p-3 rounded-xl border flex flex-col justify-between cursor-pointer transition transform active:scale-95`;
+        div.onclick = () => filtrarPorRol(r.key);
+        div.innerHTML = `
+          <span class="text-[11px] font-bold text-slate-200">${r.nombre}</span>
+          <div class="mt-2 flex items-baseline justify-between">
+            <span class="text-xl font-extrabold text-blue-400">${asistenciasRol.length}</span>
+            <span class="text-[10px] text-slate-400">de ${personasRol.length} reg.</span>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    // RENDERIZAR GRÁFICAS EN PANTALLA
+    function renderizarGraficasEstadisticas() {
+      const divRoles = document.getElementById('graficaRoles');
+      const divTurnos = document.getElementById('graficaTurnos');
+      divRoles.innerHTML = '';
+      divTurnos.innerHTML = '';
+
+      // Conteo por Roles
+      const rolesDefinidos = [
+        { key: 'estudiante', nombre: 'Estudiantes', color: 'from-blue-500 to-indigo-500' },
+        { key: 'docente', nombre: 'Docentes', color: 'from-emerald-500 to-teal-500' },
+        { key: 'obrero', nombre: 'Obreros', color: 'from-amber-500 to-orange-500' },
+        { key: 'cocina', nombre: 'Cocina/CNAE', color: 'from-fuchsia-500 to-pink-500' },
+        { key: 'administrativo', nombre: 'Adm./Directivo', color: 'from-cyan-500 to-blue-600' }
+      ];
+
+      let maxRol = 1;
+      let conteoRoles = rolesDefinidos.map(r => {
+        const personasRol = datosPersonas.filter(p => {
+          const rolP = (p.rol || p.grado || '').toLowerCase();
+          return rolP.includes(r.key) || (r.key === 'estudiante' && (rolP.includes('año') || rolP.includes('grado') || rolP.includes('alumno')));
+        });
+        const cedulasRol = new Set(personasRol.map(p => p.cedula));
+        const total = datosAsistencia.filter(a => cedulasRol.has(a.cedula)).length;
+        if (total > maxRol) maxRol = total;
+        return { name: r.nombre, total, color: r.color };
+      });
+
+      conteoRoles.forEach(item => {
+        const porc = Math.round((item.total / maxRol) * 100);
+        divRoles.innerHTML += `
+          <div>
+            <div class="flex justify-between text-[11px] mb-1 font-semibold text-slate-300">
+              <span>${item.name}</span>
+              <span class="text-blue-400">${item.total} asistencias</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r ${item.color} h-full rounded-full transition-all duration-500" style="width: ${porc}%"></div>
+            </div>
+          </div>
+        `;
+      });
+
+      // Conteo por Turnos
+      let turnosCount = { Mañana: 0, Tarde: 0, Nocturno: 0 };
+      datosAsistencia.forEach(a => {
+        const persona = datosPersonas.find(p => p.cedula === a.cedula);
+        let turno = 'Mañana';
+        if (persona) {
+          let tRaw = (persona.turno || '').toLowerCase();
+          if (tRaw.includes('tarde')) turno = 'Tarde';
+          else if (tRaw.includes('nocturno') || tRaw.includes('noche')) turno = 'Nocturno';
+        }
+        turnosCount[turno]++;
+      });
+
+      let maxTurno = Math.max(turnosCount.Mañana, turnosCount.Tarde, turnosCount.Nocturno, 1);
+      const turnosVisuales = [
+        { name: 'Mañana', total: turnosCount.Mañana, color: 'from-amber-400 to-orange-500' },
+        { name: 'Tarde', total: turnosCount.Tarde, color: 'from-blue-400 to-indigo-600' },
+        { name: 'Nocturno', total: turnosCount.Nocturno, color: 'from-fuchsia-500 to-purple-600' }
+      ];
+
+      turnosVisuales.forEach(item => {
+        const porc = Math.round((item.total / maxTurno) * 100);
+        divTurnos.innerHTML += `
+          <div>
+            <div class="flex justify-between text-[11px] mb-1 font-semibold text-slate-300">
+              <span>☀️ Turno ${item.name}</span>
+              <span class="text-emerald-400">${item.total} asistencias</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r ${item.color} h-full rounded-full transition-all duration-500" style="width: ${porc}%"></div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function filtrarPorRol(rol) {
+      rolFiltroActual = rol;
+      document.getElementById('txtRolActivoBadge').innerText = rol.toUpperCase();
+      renderizarAsistenciaPorRoles();
+      renderizarTablaAsistencia();
+    }
+
+    // ANÁLISIS DE TURNOS
+    function renderizarAnalisisTurnos() {
+      const contenedor = document.getElementById('contenedorAnalisisTurnos');
+      contenedor.innerHTML = '';
+
+      if (datosAsistencia.length === 0) {
+        contenedor.innerHTML = `<p class="text-slate-500 col-span-3">Sin registros de asistencia en este período.</p>`;
+        return;
+      }
+
+      let turnos = {
+        Mañana: { total: 0, grados: {} },
+        Tarde: { total: 0, grados: {} },
+        Nocturno: { total: 0, grados: {} }
+      };
+
+      datosAsistencia.forEach(a => {
+        const persona = datosPersonas.find(p => p.cedula === a.cedula);
+        let turno = 'Mañana';
+        let grado = 'General';
+        let seccion = 'Única';
+        let sexo = 'No especificado';
+
+        if (persona) {
+          let tRaw = (persona.turno || '').toLowerCase();
+          if (tRaw.includes('tarde')) turno = 'Tarde';
+          else if (tRaw.includes('nocturno') || tRaw.includes('noche')) turno = 'Nocturno';
+
+          grado = persona.grado || persona.rol || 'General';
+          seccion = persona.seccion || 'Única';
+
+          let sRaw = (persona.sexo || persona.genero || '').toUpperCase();
+          if (sRaw.startsWith('M')) sexo = 'Masculino';
+          else if (sRaw.startsWith('F')) sexo = 'Femenino';
+        }
+
+        turnos[turno].total++;
+        if (!turnos[turno].grados[grado]) turnos[turno].grados[grado] = {};
+        if (!turnos[turno].grados[grado][seccion]) turnos[turno].grados[grado][seccion] = { Masculino: 0, Femenino: 0, total: 0 };
+
+        turnos[turno].grados[grado][seccion][sexo === 'Masculino' ? 'Masculino' : 'Femenino']++;
+        turnos[turno].grados[grado][seccion].total++;
+      });
+
+      for (const [nombreTurno, dataT] of Object.entries(turnos)) {
+        const div = document.createElement('div');
+        div.className = "bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-2";
+        
+        let html = `<div class="font-extrabold text-sm flex justify-between border-b border-slate-800 pb-2">
+          <span class="text-slate-100">☀️ Turno ${nombreTurno}</span>
+          <span class="text-emerald-400 font-bold">${dataT.total} Asistencias</span>
+        </div>`;
+
+        if (dataT.total === 0) {
+          html += `<p class="text-slate-500 text-[11px]">Sin asistencias en este turno.</p>`;
+        } else {
+          for (const [grado, secciones] of Object.entries(dataT.grados)) {
+            html += `<div class="space-y-1">
+              <span class="font-bold text-blue-400 block">📚 ${grado}:</span>`;
+            for (const [sec, sexos] of Object.entries(secciones)) {
+              html += `<div class="pl-2 text-[11px] text-slate-300 flex justify-between bg-slate-950/40 p-1.5 rounded-lg">
+                <span>Sec. ${sec}: <b>${sexos.total}</b></span>
+                <span class="text-slate-400">(M: <b class="text-emerald-400">${sexos.Masculino}</b> | F: <b class="text-fuchsia-400">${sexos.Femenino}</b>)</span>
+              </div>`;
+            }
+            html += `</div>`;
+          }
+        }
+
+        div.innerHTML = html;
+        contenedor.appendChild(div);
+      }
+    }
+
+    // AUDITORÍA FLEXIBLE
+    async function verificarAsistenciaDiaX() {
+      const fechaInput = document.getElementById('inputFechaConsultaDiaX').value;
+      const query = document.getElementById('inputBusquedaDiaX').value.toLowerCase().trim();
+      const contenedor = document.getElementById('resultadoDiaX');
+
+      if (!fechaInput) return alert("Seleccione una fecha.");
+      if (!query) return alert("Ingrese el nombre o cédula.");
+
+      contenedor.innerHTML = `<p class="text-slate-400 text-[11px]">Consultando...</p>`;
+
+      const persona = datosPersonas.find(p => 
+        (p.cedula || '').toLowerCase().includes(query) || 
+        (p.nombre_apellido || '').toLowerCase().includes(query)
+      );
+
+      const cedulaBuscar = persona ? persona.cedula : query;
+      const inicioDia = new Date(fechaInput + 'T00:00:00');
+      const finDia = new Date(fechaInput + 'T23:59:59');
+
+      const { data, error } = await _supabase
+        .from('asistencia')
+        .select('*')
+        .eq('cedula', cedulaBuscar)
+        .gte('fecha_hora', inicioDia.toISOString())
+        .lte('fecha_hora', finDia.toISOString());
+
+      if (error) {
+        contenedor.innerHTML = `<p class="text-rose-400 text-[11px]">Error: ${error.message}</p>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        contenedor.innerHTML = `
+          <div class="p-2 rounded-lg bg-rose-950/40 border border-rose-900/60 text-rose-300 space-y-1">
+            <p class="font-bold text-[11px]">❌ NO REGISTRÓ ASISTENCIA EL ${fechaInput}</p>
+            <p class="text-[10px] text-slate-400">Sujeto: ${persona ? persona.nombre_apellido : query}</p>
+          </div>
+        `;
+      } else {
+        let movimientosHtml = data.map(m => `<li>${m.tipo_movimiento} (${new Date(m.fecha_hora).toLocaleTimeString()})</li>`).join('');
+        contenedor.innerHTML = `
+          <div class="p-2 rounded-lg bg-emerald-950/40 border border-emerald-900/60 text-emerald-300 space-y-1">
+            <p class="font-bold text-[11px]">✅ SÍ ASISTIÓ (${data[0].nombre_apellido})</p>
+            <ul class="list-disc pl-4 text-[10px] text-slate-200">${movimientosHtml}</ul>
+          </div>
+        `;
+      }
+    }
+
+    function renderizarTablaAsistencia() {
+      const tbody = document.getElementById('tablaMetricas');
+      
+      let listaFiltrada = datosAsistencia;
+      if (rolFiltroActual !== 'todos') {
+        listaFiltrada = datosAsistencia.filter(a => {
+          const persona = datosPersonas.find(p => p.cedula === a.cedula);
+          const rolPersona = (persona ? (persona.rol || persona.grado || '') : '').toLowerCase();
+          return rolPersona.includes(rolFiltroActual);
+        });
+      }
+
+      if (listaFiltrada.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">No hay registros de asistencia para este filtro.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = listaFiltrada.map(u => {
+        const fecha = new Date(u.fecha_hora).toLocaleString('es-VE', { dateStyle: 'short', timeStyle: 'short' });
+        const persona = datosPersonas.find(p => p.cedula === u.cedula);
+        const gradoSeccion = persona ? `${persona.grado || '---'} [${persona.seccion || 'Única'}]` : '---';
+        const turnoPersona = persona ? (persona.turno || 'Mañana') : 'Mañana';
+
+        return `
+          <tr class="hover:bg-slate-900/60 transition">
+            <td class="p-3 font-mono text-slate-400">${fecha}</td>
+            <td class="p-3 font-medium text-slate-100">${u.nombre_apellido || 'Sin Nombre'}</td>
+            <td class="p-3 font-mono text-blue-400 font-bold">${u.cedula || '---'}</td>
+            <td class="p-3 text-slate-300">${gradoSeccion}</td>
+            <td class="p-3 text-amber-400 font-semibold">${turnoPersona}</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.tipo_movimiento === 'ENTRADA' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">${u.tipo_movimiento}</span></td>
+            <td class="p-3 font-bold text-slate-300">${u.estado_asistencia || 'A TIEMPO'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // EXPORTAR A EXCEL (INCLUYE RESUMEN ESTADÍSTICO Y DATOS INSTITUCIONALES)
+    function exportarExcel() {
+      if (datosAsistencia.length === 0) return alert("No hay datos para exportar.");
+
+      let listaFiltrada = datosAsistencia;
+      if (rolFiltroActual !== 'todos') {
+        listaFiltrada = datosAsistencia.filter(a => {
+          const persona = datosPersonas.find(p => p.cedula === a.cedula);
+          const rolPersona = (persona ? (persona.rol || persona.grado || '') : '').toLowerCase();
+          return rolPersona.includes(rolFiltroActual);
+        });
+      }
+
+      const filasExcel = [
+        { "REPÚBLICA BOLIVARIANA DE VENEZUELA": "COMPLEJO EDUCATIVO GUAICAIPURO" },
+        { "REPÚBLICA BOLIVARIANA DE VENEZUELA": "PARROQUIA CARAYACA - ESTADO LA GUAIRA" },
+        { "REPÚBLICA BOLIVARIANA DE VENEZUELA": `REPORTE DE ASISTENCIA Y MÉTRICAS (${rolFiltroActual.toUpperCase()})` },
+        { "REPÚBLICA BOLIVARIANA DE VENEZUELA": `Fecha de Emisión: ${new Date().toLocaleString('es-VE')}` },
+        {} // Fila en blanco
+      ];
+
+      listaFiltrada.forEach(d => {
+        const persona = datosPersonas.find(p => p.cedula === d.cedula);
+        filasExcel.push({
+          "REPÚBLICA BOLIVARIANA DE VENEZUELA": "",
+          "Fecha y Hora": new Date(d.fecha_hora).toLocaleString('es-VE'),
+          "Nombre y Apellido": d.nombre_apellido || "Sin Nombre",
+          "Cédula": d.cedula || "---",
+          "Grado / Sección": persona ? `${persona.grado || '---'} [${persona.seccion || 'Única'}]` : '---',
+          "Turno": persona ? (persona.turno || 'Mañana') : 'Mañana',
+          "Movimiento": d.tipo_movimiento || "---",
+          "Estado Semáforo": d.estado_asistencia || "A TIEMPO"
+        });
+      });
+
+      const hoja = XLSX.utils.json_to_sheet(filasExcel, { skipHeader: false });
+      const libro = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(libro, hoja, "Reporte_CEG");
+      XLSX.writeFile(libro, `Reporte_Institucional_CEG_${rolFiltroActual}.xlsx`);
+    }
+
+    // EXPORTAR A PDF OFICIAL CON MEMBRETE Y RESUMEN ESTADÍSTICO
+    function exportarPDFOficial() {
+      if (datosAsistencia.length === 0) return alert("No hay datos para exportar.");
+
+      let listaFiltrada = datosAsistencia;
+      if (rolFiltroActual !== 'todos') {
+        listaFiltrada = datosAsistencia.filter(a => {
+          const persona = datosPersonas.find(p => p.cedula === a.cedula);
+          const rolPersona = (persona ? (persona.rol || persona.grado || '') : '').toLowerCase();
+          return rolPersona.includes(rolFiltroActual);
+        });
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(20, 20, 20);
+
+      const centroPagina = doc.internal.pageSize.getWidth() / 2;
+
+      doc.text("REPÚBLICA BOLIVARIANA DE VENEZUELA", centroPagina, 12, { align: "center" });
+      doc.text("MINISTERIO DEL PODER POPULAR PARA LA EDUCACIÓN", centroPagina, 17, { align: "center" });
+      doc.setFontSize(11);
+      doc.text("COMPLEJO EDUCATIVO GUAICAIPURO", centroPagina, 23, { align: "center" });
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      doc.text("PARROQUIA CARAYACA - ESTADO LA GUAIRA", centroPagina, 28, { align: "center" });
+
+      doc.setDrawColor(30, 58, 138);
+      doc.setFillColor(239, 246, 255);
+      doc.roundedRect(12, 10, 18, 20, 2, 2, "FD");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(30, 58, 138);
+      doc.text("CEG", 21, 22, { align: "center" });
+
+      doc.setLineWidth(0.5);
+      doc.setDrawColor(30, 58, 138);
+      doc.line(12, 32, doc.internal.pageSize.getWidth() - 12, 32);
+
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(30, 58, 138);
+      doc.text(`REPORTE INSTITUCIONAL DE ASISTENCIA Y ESTADÍSTICAS (${rolFiltroActual.toUpperCase()})`, centroPagina, 39, { align: "center" });
+
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(80, 80, 80);
+      doc.text(`Fecha de Emisión: ${new Date().toLocaleString('es-VE')}`, 14, 45);
+      doc.text(`Total de Registros en Reporte: ${listaFiltrada.length}`, 14, 50);
+
+      const cuerpoTabla = listaFiltrada.map(d => {
+        const persona = datosPersonas.find(p => p.cedula === d.cedula);
+        return [
+          new Date(d.fecha_hora).toLocaleString('es-VE'),
+          d.nombre_apellido || "Sin Nombre",
+          d.cedula || "---",
+          persona ? `${persona.grado || '---'} [${persona.seccion || 'Única'}]` : '---',
+          persona ? (persona.turno || 'Mañana') : 'Mañana',
+          d.tipo_movimiento || "---",
+          d.estado_asistencia || "A TIEMPO"
+        ];
+      });
+
+      doc.autoTable({
+        startY: 54,
+        head: [['Fecha y Hora', 'Nombres y Apellidos', 'Cédula', 'Grado / Sección', 'Turno', 'Movimiento', 'Estado / Semáforo']],
+        body: cuerpoTabla,
+        headStyles: { fillColor: [30, 58, 138], textColor: [255, 255, 255], fontStyle: 'bold', halign: 'center' },
+        styles: { fontSize: 8, cellPadding: 2.5 },
+        columnStyles: {
+          0: { cellWidth: 32 },
+          1: { cellWidth: 45 },
+          2: { cellWidth: 22, halign: 'center' },
+          3: { cellWidth: 28, halign: 'center' },
+          4: { cellWidth: 20, halign: 'center' },
+          5: { cellWidth: 20, halign: 'center' },
+          6: { cellWidth: 23, halign: 'center' }
+        }
+      });
+
+      let posFinalY = doc.lastAutoTable.finalY + 30;
+      if (posFinalY > 250) {
+        doc.addPage();
+        posFinalY = 50;
+      }
+
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(30, 30, 30);
+
+      doc.line(25, posFinalY, 85, posFinalY);
+      doc.text("Directora del Plantel", 55, posFinalY + 5, { align: "center" });
+      doc.setFont("helvetica", "normal");
+      doc.text("C.E. Guaicaipuro", 55, posFinalY + 9, { align: "center" });
+
+      doc.setFont("helvetica", "bold");
+      doc.line(125, posFinalY, 185, posFinalY);
+      doc.text("Subdirectora Académica", 155, posFinalY + 5, { align: "center" });
+      doc.setFont("helvetica", "normal");
+      doc.text("C.E. Guaicaipuro", 155, posFinalY + 9, { align: "center" });
+
+      doc.save(`Reporte_Oficial_CEG_${rolFiltroActual}.pdf`);
+    }
+  </script>
+</body>
+</html>
