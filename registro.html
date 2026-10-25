@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro & Carnetización - C.E. Guaicaipuro</title>
+  <title>Registro & Carnetización - U.E.N EL PARDILLO</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -19,7 +19,7 @@
     </a>
     <div class="text-right">
       <h1 class="text-xl font-bold text-slate-100">Registro & Carnets Digitales</h1>
-      <p class="text-[11px] text-blue-400">Complejo Educativo Guaicaipuro</p>
+      <p class="text-[11px] text-blue-400">U.E.N EL PARDILLO</p>
     </div>
   </header>
 
@@ -70,11 +70,12 @@
             <label class="block text-xs font-medium text-slate-400 mb-1">Año Escolar</label>
             <select id="ano_escolar" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500">
               <option value="">Seleccione...</option>
-              <option value="1er Año">1er Año</option>
-              <option value="2do Año">2do Año</option>
-              <option value="3er Año">3er Año</option>
-              <option value="4to Año">4to Año</option>
-              <option value="5to Año">5to Año</option>
+              <option value="1er Grado">1er Grado</option>
+              <option value="2do Grado">2do Grado</option>
+              <option value="3er Grado">3er Grado</option>
+              <option value="4to Grado">4to Grado</option>
+              <option value="5to Grado">5to Grado</option>
+              <option value="6to Grado">6to Grado</option>
             </select>
           </div>
           <div>
@@ -84,6 +85,11 @@
               <option value="A">Sección A</option>
               <option value="B">Sección B</option>
               <option value="C">Sección C</option>
+              <option value="D">Sección D</option>
+              <option value="E">Sección E</option>
+              <option value="F">Sección F</option>
+              <option value="G">Sección G</option>
+              <option value="H">Sección H</option>
               <option value="U">Única</option>
             </select>
           </div>
@@ -129,8 +135,8 @@
   </main>
 
   <script>
-    const API_URL = "https://dampbjspktpcffqpuiuz.supabase.co/rest/v1/registro_general";
-    const API_KEY = "sb_publishable_raLpaXN3c1UpS4mHFvWkTQ_YNbtB3Q5";
+    const SUPABASE_URL = "https://kikslsumraitoujacew.supabase.co";
+const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
 
     let qrObj = null;
 
