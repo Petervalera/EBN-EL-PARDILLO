@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escáner de Asistencia - U.E.N EL PARDILLO</title>
+  <title>Escáner de Asistencia - E.B.N EL PARDILLO</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
@@ -196,7 +196,7 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
 
     function enviarTelegram(chatId, nombre, movimiento, estado) {
       const horaActual = new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
-      const texto = encodeURIComponent(`🏛️ *U.E.N EL PARDILLO*\n\n📌 *Notificación de Asistencia*\n👤 *Alumno:* ${nombre}\n🔄 *Movimiento:* ${movimiento}\n🚦 *Estado:* ${estado}\n⏰ *Hora:* ${horaActual}`);
+      const texto = encodeURIComponent(`🏛️ *E.B.N EL PARDILLO*\n\n📌 *Notificación de Asistencia*\n👤 *Alumno:* ${nombre}\n🔄 *Movimiento:* ${movimiento}\n🚦 *Estado:* ${estado}\n⏰ *Hora:* ${horaActual}`);
       fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${chatId}&text=${texto}&parse_mode=Markdown`)
         .then(res => res.json())
         .then(data => console.log("Telegram enviado con éxito:", data))
