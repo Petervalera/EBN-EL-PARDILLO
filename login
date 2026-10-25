@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acceso al Sistema - C.E. Guaicaipuro</title>
+  <title>Acceso al Sistema - E.B.N EL PARDILLO</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -37,7 +37,7 @@
         <img id="logoHeader" src="logo_ce_guaicaipuro.png" alt="Logo Colegio" class="w-full h-full object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/167/167707.png'">
       </div>
       <div>
-        <h1 id="tituloInstitucion" class="text-2xl font-extrabold text-white tracking-tight uppercase">C.E. GUAICAIPURO</h1>
+        <h1 id="tituloInstitucion" class="text-2xl font-extrabold text-white tracking-tight uppercase">E.B.N EL PARDILLO</h1>
         <p class="text-xs text-blue-400 font-bold uppercase tracking-wider mt-1">Control de Asistencia e Identificación Digital</p>
       </div>
     </header>
