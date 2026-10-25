@@ -69,7 +69,7 @@
             <option value="Docente / Profesor">Docente / Profesor</option>
             <option value="Estudiante / Alumno">Estudiante / Alumno</option>
             <option value="Personal Obrero">Personal Obrero</option>
-            <option value="Portero">Pertero</option>
+            <option value="Portero">Portero</option>
             <option value="Cocina / CNAE">Cocina / CNAE</option>
           </select>
         </div>
@@ -78,7 +78,7 @@
       <!-- CAMPO DE CONTRASEÑA DE ACCESO -->
       <div id="contenedorContrasena">
         <label class="block text-xs font-bold text-blue-400 mb-1">🔑 Contraseña de Acceso al Sistema</label>
-        <input type="password" id="clave" placeholder="Cree una contraseña (alfanumérica, asteriscos, puntos...)" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+        <input type="password" id="contrasena" placeholder="Cree una contraseña (alfanumérica, asteriscos, puntos...)" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
         <p class="text-[10px] text-slate-500 mt-1">Requerido para ingresar a los módulos asignados según su rol.</p>
       </div>
 
@@ -147,7 +147,7 @@
     function evaluarCampoContrasena() {
       const rol = document.getElementById("rol").value;
       const contenedor = document.getElementById("contenedorContrasena");
-      const inputClave = document.getElementById("clave");
+      const inputClave = document.getElementById("contrasena");
 
       const rolesConClave = ["Super Administrador", "Personal Directivo", "Personal Administrativo", "Docente / Profesor"];
 
@@ -189,7 +189,7 @@
       const numCed = document.getElementById("cedula").value.trim();
       const telefono = document.getElementById("telefono").value.trim();
       const rol = document.getElementById("rol").value;
-      const claveAcceso = document.getElementById("clave").value.trim();
+      const contrasenaAcceso = document.getElementById("contrasena").value.trim();
 
       const cedulaCompleta = `${tipoCed}${numCed}`;
 
@@ -199,19 +199,18 @@
       }
 
       const rolesConClave = ["Super Administrador", "Personal Directivo", "Personal Administrativo", "Docente / Profesor"];
-      if (rolesConClave.includes(rol) && !claveAcceso) {
+      if (rolesConClave.includes(rol) && !contrasenaAcceso) {
         alert("El rol seleccionado requiere una contraseña de acceso.");
         return;
       }
 
-      // Estructura exacta sincronizada con la columna clave y tipo_usuario de Supabase
+      // Estructura sincronizada exactamente con las columnas reales de la base de datos
       const datosUsuario = {
-        cedula: cedulaCompleta,
         nombre_apellido: nombre,
+        cedula: cedulaCompleta,
         telefono: telefono,
         rol: rol,
-        tipo_usuario: rol,
-        clave: claveAcceso !== "" ? claveAcceso : null
+        contrasena: contrasenaAcceso !== "" ? contrasenaAcceso : null
       };
 
       const { error } = await _supabase
