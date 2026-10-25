@@ -11,11 +11,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-      -webkit-appearance: none; 
-      margin: 0; 
-    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-4 md:p-8">
@@ -30,7 +25,7 @@
     </a>
     <div class="text-right">
       <h1 class="text-2xl font-extrabold tracking-wide text-white">U.E.N EL PARDILLO</h1>
-      <p class="text-xs font-bold text-fuchsia-400 tracking-wider">GESTIÓN ACADÉMICA Y CARGA DE 5 EVALUACIONES</p>
+      <p class="text-xs font-bold text-fuchsia-400 tracking-wider">GESTIÓN ACADÉMICA Y CARGA DE 5 EVALUACIONES (LITERALES A-E)</p>
     </div>
   </header>
 
@@ -41,7 +36,7 @@
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h2 class="text-lg font-bold text-white">Configuración de Carga de Evaluaciones</h2>
-          <p class="text-xs text-slate-400">Ingrese las 5 notas parciales por estudiante para calcular la definitiva</p>
+          <p class="text-xs text-slate-400">Ingrese las 5 notas literales (A-E) por estudiante para calcular la definitiva</p>
         </div>
         
         <!-- Toggle Modo de Carga -->
@@ -58,7 +53,7 @@
       <!-- Selectores Principales -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
-          <label class="block text-[11px] font-bold text-slate-300 mb-1.5 uppercase">Graduación / Año</label>
+          <label class="block text-[11px] font-bold text-slate-300 mb-1.5 uppercase">Graduación / Grado</label>
           <select id="selectGraduacion" onchange="cargarEstudiantes()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-fuchsia-500">
             <option value="1er Grado">1er Grado</option>
             <option value="2do Grado">2do Grado</option>
@@ -85,7 +80,7 @@
 
         <div>
           <label class="block text-[11px] font-bold text-slate-300 mb-1.5 uppercase">Materia / Asignatura</label>
-          <input type="text" id="inputMateria" oninput="cargarEstudiantes()" placeholder="Ej. Matemáticas, CRP..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-fuchsia-500">
+          <input type="text" id="inputMateria" oninput="cargarEstudiantes()" placeholder="Ej. Matemáticas, Proyecto..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-fuchsia-500">
         </div>
 
         <div>
@@ -101,7 +96,7 @@
       <!-- Fila Inferior: Profesor y Buscador Individual -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         <div>
-          <label class="block text-[11px] font-bold text-slate-300 mb-1.5 uppercase">Nombre y Apellido del Profesor</label>
+          <label class="block text-[11px] font-bold text-slate-300 mb-1.5 uppercase">Nombre y Apellido del Docente</label>
           <input type="text" id="inputProfesor" placeholder="Ej. Prof. Carlos Pérez" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-fuchsia-500">
         </div>
 
@@ -116,14 +111,14 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-center">
         <span class="text-xs text-slate-400 font-semibold uppercase block">Promedio Sección</span>
-        <span id="statPromedio" class="text-2xl font-extrabold text-blue-400">0.0</span>
+        <span id="statPromedio" class="text-2xl font-extrabold text-blue-400">-</span>
       </div>
       <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-center">
         <span class="text-xs text-slate-400 font-semibold uppercase block">Aprobados</span>
         <span id="statAprobados" class="text-2xl font-extrabold text-emerald-400">0</span>
       </div>
       <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-center">
-        <span class="text-xs text-slate-400 font-semibold uppercase block">Reprobados</span>
+        <span class="text-xs text-slate-400 font-semibold uppercase block">Reprobados (E)</span>
         <span id="statReprobados" class="text-2xl font-extrabold text-rose-400">0</span>
       </div>
       <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-center">
@@ -135,13 +130,13 @@
     <!-- Nómina de Calificaciones -->
     <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
-        <h3 class="text-base font-extrabold tracking-wide text-white uppercase">NÓMINA DE CALIFICACIONES (5 EVALUACIONES)</h3>
+        <h3 class="text-base font-extrabold tracking-wide text-white uppercase">NÓMINA DE CALIFICACIONES (LITERALES A - E)</h3>
         
         <!-- Leyenda Semáforo -->
         <div class="flex gap-2 text-[10px] font-bold">
-          <span class="px-2.5 py-1 bg-rose-950/80 border border-rose-800/60 text-rose-300 rounded-md">01 - 09 (DEFICIENTE)</span>
-          <span class="px-2.5 py-1 bg-amber-950/80 border border-amber-800/60 text-amber-300 rounded-md">10 - 15 (REGULAR)</span>
-          <span class="px-2.5 py-1 bg-emerald-950/80 border border-emerald-800/60 text-emerald-300 rounded-md">16 - 20 (EXCELENTE)</span>
+          <span class="px-2.5 py-1 bg-rose-950/80 border border-rose-800/60 text-rose-300 rounded-md">E (DEFICIENTE)</span>
+          <span class="px-2.5 py-1 bg-amber-950/80 border border-amber-800/60 text-amber-300 rounded-md">C - D (REGULAR)</span>
+          <span class="px-2.5 py-1 bg-emerald-950/80 border border-emerald-800/60 text-emerald-300 rounded-md">A - B (EXCELENTE)</span>
         </div>
       </div>
 
@@ -183,7 +178,7 @@
 
   <script>
     const SUPABASE_URL = "https://kikslsumraitoujacew.supabase.co";
-const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
+    const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let estudiantesCargados = [];
@@ -245,11 +240,11 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
       if (notasGuardadas) {
         notasGuardadas.forEach(n => {
           mapaNotas[n.cedula] = {
-            n1: n.nota1 !== undefined ? n.nota1 : '',
-            n2: n.nota2 !== undefined ? n.nota2 : '',
-            n3: n.nota3 !== undefined ? n.nota3 : '',
-            n4: n.nota4 !== undefined ? n.nota4 : '',
-            n5: n.nota5 !== undefined ? n.nota5 : ''
+            n1: n.nota1 !== undefined && n.nota1 !== null ? n.nota1 : '',
+            n2: n.nota2 !== undefined && n.nota2 !== null ? n.nota2 : '',
+            n3: n.nota3 !== undefined && n.nota3 !== null ? n.nota3 : '',
+            n4: n.nota4 !== undefined && n.nota4 !== null ? n.nota4 : '',
+            n5: n.nota5 !== undefined && n.nota5 !== null ? n.nota5 : ''
           };
         });
       }
@@ -289,11 +284,11 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
         tr.innerHTML = `
           <td class="py-3 px-3 font-mono text-blue-400 font-bold">${est.cedula || 'N/A'}</td>
           <td class="py-3 px-3 font-bold text-white">${est.nombre_apellido}</td>
-          <td class="py-3 px-2 text-center"><input type="number" min="1" max="20" value="${est.n1}" oninput="actualizarNota(${index}, 1, this.value)" placeholder="-" class="w-12 text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-white focus:outline-none focus:border-fuchsia-500"></td>
-          <td class="py-3 px-2 text-center"><input type="number" min="1" max="20" value="${est.n2}" oninput="actualizarNota(${index}, 2, this.value)" placeholder="-" class="w-12 text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-white focus:outline-none focus:border-fuchsia-500"></td>
-          <td class="py-3 px-2 text-center"><input type="number" min="1" max="20" value="${est.n3}" oninput="actualizarNota(${index}, 3, this.value)" placeholder="-" class="w-12 text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-white focus:outline-none focus:border-fuchsia-500"></td>
-          <td class="py-3 px-2 text-center"><input type="number" min="1" max="20" value="${est.n4}" oninput="actualizarNota(${index}, 4, this.value)" placeholder="-" class="w-12 text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-white focus:outline-none focus:border-fuchsia-500"></td>
-          <td class="py-3 px-2 text-center"><input type="number" min="1" max="20" value="${est.n5}" oninput="actualizarNota(${index}, 5, this.value)" placeholder="-" class="w-12 text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-white focus:outline-none focus:border-fuchsia-500"></td>
+          <td class="py-3 px-2 text-center"><input type="text" maxlength="1" value="${est.n1}" oninput="this.value = this.value.toUpperCase(); actualizarNota(${index}, 1, this.value)" placeholder="-" class="w-10 text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-white focus:outline-none focus:border-fuchsia-500"></td>
+          <td class="py-3 px-2 text-center"><input type="text" maxlength="1" value="${est.n2}" oninput="this.value = this.value.toUpperCase(); actualizarNota(${index}, 2, this.value)" placeholder="-" class="w-10 text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-white focus:outline-none focus:border-fuchsia-500"></td>
+          <td class="py-3 px-2 text-center"><input type="text" maxlength="1" value="${est.n3}" oninput="this.value = this.value.toUpperCase(); actualizarNota(${index}, 3, this.value)" placeholder="-" class="w-10 text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-white focus:outline-none focus:border-fuchsia-500"></td>
+          <td class="py-3 px-2 text-center"><input type="text" maxlength="1" value="${est.n4}" oninput="this.value = this.value.toUpperCase(); actualizarNota(${index}, 4, this.value)" placeholder="-" class="w-10 text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-white focus:outline-none focus:border-fuchsia-500"></td>
+          <td class="py-3 px-2 text-center"><input type="text" maxlength="1" value="${est.n5}" oninput="this.value = this.value.toUpperCase(); actualizarNota(${index}, 5, this.value)" placeholder="-" class="w-10 text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-white focus:outline-none focus:border-fuchsia-500"></td>
           <td class="py-3 px-3 text-center font-extrabold text-fuchsia-400 text-sm" id="def-${index}">${definitiva !== '' ? definitiva : '-'}</td>
           <td class="py-3 px-3 text-center" id="semaforo-${index}">${estadoSemaforoHtml}</td>
           <td class="py-3 px-3 text-center">
@@ -310,67 +305,74 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
     }
 
     function actualizarNota(index, numNota, valor) {
-      let num = parseInt(valor);
-      if (isNaN(num)) {
-        estudiantesCargados[index][`n${numNota}`] = '';
-      } else {
-        if (num > 20) num = 20;
-        if (num < 1) num = 1;
-        estudiantesCargados[index][`n${numNota}`] = num;
+      const letra = (valor || '').trim().toUpperCase();
+      if (['A', 'B', 'C', 'D', 'E', ''].includes(letra)) {
+        estudiantesCargados[index][`n${numNota}`] = letra;
       }
-
       const definitiva = calcularDefinitiva(estudiantesCargados[index]);
-      
       document.getElementById(`def-${index}`).innerText = definitiva !== '' ? definitiva : '-';
       document.getElementById(`semaforo-${index}`).innerHTML = obtenerBadgeSemaforo(definitiva);
-
       actualizarEstadisticas();
     }
 
-    function calcularDefinitiva(est) {
-      const notas = [est.n1, est.n2, est.n3, est.n4, est.n5]
-        .map(n => parseInt(n))
-        .filter(n => !isNaN(n));
+    function letraANumero(l) {
+      switch((l || '').toUpperCase()) {
+        case 'A': return 5;
+        case 'B': return 4;
+        case 'C': return 3;
+        case 'D': return 2;
+        case 'E': return 1;
+        default: return 0;
+      }
+    }
 
+    function numeroALiteral(n) {
+      if (n >= 4.5) return 'A';
+      if (n >= 3.5) return 'B';
+      if (n >= 2.5) return 'C';
+      if (n >= 1.5) return 'D';
+      if (n > 0) return 'E';
+      return '';
+    }
+
+    function calcularDefinitiva(est) {
+      const notas = [est.n1, est.n2, est.n3, est.n4, est.n5].filter(n => n && n !== '');
       if (notas.length === 0) return '';
-      const suma = notas.reduce((a, b) => a + b, 0);
-      return Math.round(suma / notas.length);
+      const suma = notas.reduce((acc, val) => acc + letraANumero(val), 0);
+      const promedio = suma / notas.length;
+      return numeroALiteral(promedio);
     }
 
     function obtenerBadgeSemaforo(nota) {
-      if (nota === '' || nota === undefined || isNaN(nota)) {
+      if (!nota || nota === '') {
         return `<span class="px-2.5 py-1 bg-slate-800 text-slate-400 rounded-md font-bold text-[10px]">SIN NOTA</span>`;
       }
-      const val = parseInt(nota);
-      if (val >= 16) {
-        return `<span class="px-2.5 py-1 bg-emerald-950/90 border border-emerald-700 text-emerald-300 rounded-md font-bold text-[10px]">16-20 EXCELENTE</span>`;
-      } else if (val >= 10) {
-        return `<span class="px-2.5 py-1 bg-amber-950/90 border border-amber-700 text-amber-300 rounded-md font-bold text-[10px]">10-15 REGULAR</span>`;
+      if (nota === 'A' || nota === 'B') {
+        return `<span class="px-2.5 py-1 bg-emerald-950/90 border border-emerald-700 text-emerald-300 rounded-md font-bold text-[10px]">EXCELENTE (${nota})</span>`;
+      } else if (nota === 'C' || nota === 'D') {
+        return `<span class="px-2.5 py-1 bg-amber-950/90 border border-amber-700 text-amber-300 rounded-md font-bold text-[10px]">REGULAR (${nota})</span>`;
       } else {
-        return `<span class="px-2.5 py-1 bg-rose-950/90 border border-rose-700 text-rose-300 rounded-md font-bold text-[10px]">01-09 DEFICIENTE</span>`;
+        return `<span class="px-2.5 py-1 bg-rose-950/90 border border-rose-700 text-rose-300 rounded-md font-bold text-[10px]">DEFICIENTE (${nota})</span>`;
       }
     }
 
     function actualizarEstadisticas() {
-      const definitivasValidas = estudiantesCargados
-        .map(e => calcularDefinitiva(e))
-        .filter(n => n !== '' && !isNaN(n));
-
+      const definitivasValidas = estudiantesCargados.map(e => calcularDefinitiva(e)).filter(n => n !== '');
       if (definitivasValidas.length === 0) {
-        document.getElementById("statPromedio").innerText = "0.0";
+        document.getElementById("statPromedio").innerText = "-";
         document.getElementById("statAprobados").innerText = "0";
         document.getElementById("statReprobados").innerText = "0";
         document.getElementById("statRendimiento").innerText = "0%";
         return;
       }
-
-      const suma = definitivasValidas.reduce((a, b) => a + b, 0);
-      const promedio = (suma / definitivasValidas.length).toFixed(1);
-      const aprobados = definitivasValidas.filter(n => n >= 10).length;
-      const reprobados = definitivasValidas.filter(n => n < 10).length;
+      const aprobados = definitivasValidas.filter(n => n !== 'E').length;
+      const reprobados = definitivasValidas.filter(n => n === 'E').length;
       const rendimiento = Math.round((aprobados / definitivasValidas.length) * 100);
 
-      document.getElementById("statPromedio").innerText = promedio;
+      const sumaNums = definitivasValidas.reduce((acc, val) => acc + letraANumero(val), 0);
+      const promLiteral = numeroALiteral(sumaNums / definitivasValidas.length);
+
+      document.getElementById("statPromedio").innerText = promLiteral;
       document.getElementById("statAprobados").innerText = aprobados;
       document.getElementById("statReprobados").innerText = reprobados;
       document.getElementById("statRendimiento").innerText = `${rendimiento}%`;
@@ -385,7 +387,7 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
       renderizarTabla(filtrados);
     }
 
-  async function guardarNotasSeccion() {
+    async function guardarNotasSeccion() {
       const mat = document.getElementById("inputMateria").value.trim();
       const lapso = document.getElementById("selectLapso").value;
       const profesor = document.getElementById("inputProfesor").value.trim();
@@ -403,11 +405,11 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
           materia: mat,
           profesor: profesor,
           lapso: lapso,
-          nota1: e.n1 !== '' ? parseInt(e.n1) : null,
-          nota2: e.n2 !== '' ? parseInt(e.n2) : null,
-          nota3: e.n3 !== '' ? parseInt(e.n3) : null,
-          nota4: e.n4 !== '' ? parseInt(e.n4) : null,
-          nota5: e.n5 !== '' ? parseInt(e.n5) : null,
+          nota1: e.n1 !== '' ? e.n1 : null,
+          nota2: e.n2 !== '' ? e.n2 : null,
+          nota3: e.n3 !== '' ? e.n3 : null,
+          nota4: e.n4 !== '' ? e.n4 : null,
+          nota5: e.n5 !== '' ? e.n5 : null,
           nota: calcularDefinitiva(e) !== '' ? calcularDefinitiva(e) : null
         }));
 
@@ -416,7 +418,6 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
         return;
       }
 
-      // Guardado directo mediante inserción limpia
       const { error } = await _supabase
         .from('notas')
         .insert(notasAGuardar);
@@ -430,14 +431,14 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
     }
 
     function exportarBoletinSeccion() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-
       const grad = document.getElementById("selectGraduacion").value;
       const sec = document.getElementById("selectSeccion").value;
       const mat = document.getElementById("inputMateria").value.trim() || "No especificada";
       const prof = document.getElementById("inputProfesor").value.trim() || "No especificado";
       const lapso = document.getElementById("selectLapso").value;
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
 
       const img = new Image();
       img.src = 'dme.jpg';
@@ -445,19 +446,19 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
       img.onload = function() {
         doc.addImage(img, 'JPEG', 14, 8, 16, 16);
         doc.setFontSize(16);
-        doc.text("C.E. GUAICAIPURO", 34, 16);
+        doc.text("U.E.N EL PARDILLO", 34, 16);
         doc.setFontSize(10);
-        doc.text(`Boletín de Notas (5 Evaluaciones) - ${grad} ${sec} | Asignatura: ${mat}`, 34, 22);
-        doc.text(`Profesor(a): ${prof} | ${lapso}`, 34, 28);
+        doc.text(`Boletín de Notas (Literales A-E) - ${grad} ${sec} | Asignatura: ${mat}`, 34, 22);
+        doc.text(`Docente: ${prof} | ${lapso}`, 34, 28);
         generarTablaPDF(doc, grad, sec, mat);
       };
 
       img.onerror = function() {
         doc.setFontSize(16);
-        doc.text("C.E. GUAICAIPURO", 14, 15);
+        doc.text("U.E.N EL PARDILLO", 14, 15);
         doc.setFontSize(10);
-        doc.text(`Boletín de Notas (5 Evaluaciones) - ${grad} ${sec} | Asignatura: ${mat}`, 14, 22);
-        doc.text(`Profesor(a): ${prof} | ${lapso}`, 14, 28);
+        doc.text(`Boletín de Notas (Literales A-E) - ${grad} ${sec} | Asignatura: ${mat}`, 14, 22);
+        doc.text(`Docente: ${prof} | ${lapso}`, 14, 28);
         generarTablaPDF(doc, grad, sec, mat);
       };
     }
@@ -468,13 +469,13 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
         return [
           e.cedula || 'N/A',
           e.nombre_apellido,
-          e.n1 !== '' ? e.n1 : '-',
-          e.n2 !== '' ? e.n2 : '-',
-          e.n3 !== '' ? e.n3 : '-',
-          e.n4 !== '' ? e.n4 : '-',
-          e.n5 !== '' ? e.n5 : '-',
+          e.n1 || '-',
+          e.n2 || '-',
+          e.n3 || '-',
+          e.n4 || '-',
+          e.n5 || '-',
           def !== '' ? def : 'N/A',
-          def >= 10 ? 'Aprobado' : (def !== '' ? 'Reprobado' : 'Sin Nota')
+          def !== '' ? (def !== 'E' ? 'Aprobado' : 'Reprobado') : 'Sin Nota'
         ];
       });
 
@@ -484,7 +485,7 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
         body: filas,
       });
 
-      doc.save(`Boletin_5Evaluaciones_${grad}_${sec}_${mat}.pdf`);
+      doc.save(`Boletin_Literales_${grad}_${sec}_${mat}.pdf`);
     }
 
     function exportarPDFAlumno(cedula, nombre) {
@@ -496,13 +497,13 @@ const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
       const def = est ? calcularDefinitiva(est) : '';
 
       doc.setFontSize(16);
-      doc.text("C.E. GUAICAIPURO", 14, 15);
+      doc.text("U.E.N EL PARDILLO", 14, 15);
       doc.setFontSize(11);
-      doc.text(`Reporte Detallado de Calificaciones`, 14, 22);
+      doc.text(`Reporte Detallado de Calificaciones (Literales)`, 14, 22);
       
       doc.setFontSize(10);
       doc.text(`Estudiante: ${nombre} | Cédula: ${cedula}`, 14, 32);
-      doc.text(`Asignatura: ${mat} | Prof: ${prof}`, 14, 38);
+      doc.text(`Asignatura: ${mat} | Docente: ${prof}`, 14, 38);
       doc.text(`Evaluaciones: N1(${est?.n1||'-'}) | N2(${est?.n2||'-'}) | N3(${est?.n3||'-'}) | N4(${est?.n4||'-'}) | N5(${est?.n5||'-'})`, 14, 44);
       doc.text(`Nota Definitiva: ${def !== '' ? def : 'Sin Nota'}`, 14, 50);
 
