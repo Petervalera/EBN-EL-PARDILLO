@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro y Carnets - E.B.N EL PARDILLO</title>
+  <title>Registro y Carnets - U.E.N EL PARDILLO</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -25,7 +25,7 @@
     </a>
     <div class="text-right">
       <h1 class="text-xl md:text-2xl font-extrabold tracking-wide text-white">Registro & Carnets Digitales</h1>
-      <p class="text-xs font-bold text-blue-400 tracking-wider">E.B.N EL PARDILLO</p>
+      <p class="text-xs font-bold text-blue-400 tracking-wider">U.E.N EL PARDILLO</p>
     </div>
   </header>
 
@@ -70,7 +70,6 @@
             <option value="Estudiante / Alumno">Estudiante / Alumno</option>
             <option value="Personal Obrero">Personal Obrero</option>
             <option value="Cocina / CNAE">Cocina / CNAE</option>
-            <option value="Portero">Portero</option>
           </select>
         </div>
       </div>
@@ -94,7 +93,7 @@
       <div id="carnetVista" class="w-80 h-[420px] bg-gradient-to-b from-slate-900 to-blue-950 border border-blue-800/60 rounded-2xl p-6 flex flex-col items-center justify-between shadow-2xl relative overflow-hidden">
         
         <div class="text-center w-full z-10 border-b border-blue-800/40 pb-3">
-          <h3 class="text-sm font-black text-white tracking-widest uppercase">E.B.N EL PARDILLO</h3>
+          <h3 class="text-sm font-black text-white tracking-widest uppercase">U.E.N EL PARDILLO</h3>
           <p class="text-[9px] font-bold text-blue-400 tracking-wider">CARNET OFICIAL DE IDENTIFICACIÓN</p>
         </div>
 
@@ -105,7 +104,7 @@
         </div>
 
         <!-- CÓDIGO QR -->
-        <div class="bg-white p-3 rounded-xl shadow-md z-10 flex items-center justify-center">
+        <div class="bg-white p-2.5 rounded-xl shadow-md z-10 flex items-center justify-center">
           <div id="qrcode"></div>
         </div>
 
@@ -114,10 +113,13 @@
         </div>
       </div>
 
-      <!-- BOTONES DE DESCARGA -->
+      <!-- BOTONES DE DESCARGA RESTAURADOS -->
       <div class="flex gap-3 w-80">
-        <button onclick="descargarCarnet()" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition">
-          Descargar Carnet
+        <button onclick="descargarCarnet()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition">
+          📄 Descargar Carnet
+        </button>
+        <button onclick="descargarSoloQR()" class="flex-1 py-2.5 bg-blue-900/60 hover:bg-blue-900 text-blue-200 text-xs font-bold rounded-xl border border-blue-700/60 transition">
+          🔲 Descargar Solo QR
         </button>
       </div>
     </div>
@@ -132,10 +134,11 @@
     let qrCodeObj = null;
 
     window.addEventListener('load', () => {
+      // Inicializar QR por defecto
       qrCodeObj = new QRCode(document.getElementById("qrcode"), {
         text: "EBP-OFICIAL",
-        width: 100,
-        height: 100
+        width: 90,
+        height: 90
       });
       evaluarCampoContrasena();
     });
@@ -145,8 +148,7 @@
       const contenedor = document.getElementById("contenedorContrasena");
       const inputClave = document.getElementById("contrasena");
 
-      // Roles que SÍ requieren contraseña de acceso
-      const rolesConClave = ["Super Administrador", "Portero" "Personal Directivo", "Personal Administrativo", "Docente / Profesor"];
+      const rolesConClave = ["Super Administrador", "Personal Directivo", "Personal Administrativo", "Docente / Profesor"];
 
       if (rolesConClave.includes(rol)) {
         contenedor.style.display = "block";
@@ -154,7 +156,7 @@
       } else {
         contenedor.style.display = "none";
         inputClave.disabled = true;
-        inputClave.value = ""; // Limpia la clave si el rol no la requiere
+        inputClave.value = "";
       }
     }
 
@@ -179,6 +181,21 @@
         return;
       }
 
+      // Actualizar Vista Previa del Carnet de inmediato
+      document.getElementById("carnetNombre").innerText = nombre;
+      document.getElementById("carnetCedula").innerText = cedulaCompleta;
+      document.getElementById("carnetRol").innerText = rol;
+
+      // Regenerar QR con la cédula real
+      if (qrCodeObj) {
+        document.getElementById("qrcode").innerHTML = "";
+        qrCodeObj = new QRCode(document.getElementById("qrcode"), {
+          text: cedulaCompleta,
+          width: 90,
+          height: 90
+        });
+      }
+
       const datosUsuario = {
         cedula: cedulaCompleta,
         nombre_apellido: nombre,
@@ -193,19 +210,11 @@
 
       if (error) {
         console.error("Error al registrar:", error);
-        alert("Error al registrar usuario: " + error.message);
+        alert("Error al registrar usuario en Supabase: " + error.message);
         return;
       }
 
-      alert("¡Usuario guardado con éxito en Supabase!");
-
-      // Actualizar Vista Previa del Carnet
-      document.getElementById("carnetNombre").innerText = nombre;
-      document.getElementById("carnetCedula").innerText = cedulaCompleta;
-      document.getElementById("carnetRol").innerText = rol;
-
-      qrCodeObj.clear();
-      qrCodeObj.makeCode(cedulaCompleta);
+      alert("¡Usuario guardado con éxito en Supabase y carnet generado!");
     }
 
     function descargarCarnet() {
@@ -215,6 +224,26 @@
         link.href = canvas.toDataURL();
         link.click();
       });
+    }
+
+    function descargarSoloQR() {
+      const qrElement = document.querySelector("#qrcode img") || document.querySelector("#qrcode canvas");
+      if (!qrElement) {
+        alert("Primero genere el carnet con un usuario válido.");
+        return;
+      }
+      
+      let imageUrl = "";
+      if (qrElement.tagName === "CANVAS") {
+        imageUrl = qrElement.toDataURL("image/png");
+      } else {
+        imageUrl = qrElement.src;
+      }
+
+      const link = document.createElement('a');
+      link.download = `QR_${document.getElementById("carnetCedula").innerText}.png`;
+      link.href = imageUrl;
+      link.click();
     }
   </script>
 </body>
