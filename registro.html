@@ -3,284 +3,218 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro & Carnetización - E.B.N EL PARDILLO</title>
+  <title>Registro y Carnets - E.B.N EL PARDILLO</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-4 md:p-8">
 
-  <!-- Encabezado Institucional -->
+  <!-- Encabezado con Botón de Volver -->
   <header class="max-w-6xl mx-auto mb-6 flex items-center justify-between pb-4 border-b border-blue-900/40">
-    <a href="panel.html" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-xl text-xs font-semibold transition flex items-center gap-2">
-      <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+    <a href="index.html" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-xl text-xs font-semibold transition flex items-center gap-2">
+      <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg>
       Volver al Menú
     </a>
     <div class="text-right">
-      <h1 class="text-xl font-bold text-slate-100">Registro & Carnets Digitales</h1>
-      <p class="text-[11px] text-blue-400">E.B.N EL PARDILLO</p>
+      <h1 class="text-xl md:text-2xl font-extrabold tracking-wide text-white">Registro & Carnets Digitales</h1>
+      <p class="text-xs font-bold text-blue-400 tracking-wider">E.B.N EL PARDILLO</p>
     </div>
   </header>
 
   <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
-    
-    <!-- Formulario de Registro -->
-    <section class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800">
-      <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">Formulario de Alta</h2>
-      
-      <form id="registroForm" class="space-y-4">
+
+    <!-- FORMULARIO DE REGISTRO -->
+    <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+      <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Formulario de Alta</h2>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">Nombres y Apellidos</label>
+        <input type="text" id="nombre_apellido" placeholder="Ej. Peter Valera" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+      </div>
+
+      <div class="grid grid-cols-3 gap-2">
         <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Nombres y Apellidos</label>
-          <input type="text" id="nombre_apellido" required placeholder="Ej: Roybert Suárez" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500">
+          <label class="block text-xs font-bold text-slate-300 mb-1">Tipo</label>
+          <select id="tipo_cedula" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+            <option value="V-">V-</option>
+            <option value="E-">E-</option>
+          </select>
+        </div>
+        <div class="col-span-2">
+          <label class="block text-xs font-bold text-slate-300 mb-1">Nº Cédula / Identificación</label>
+          <input type="text" id="cedula" placeholder="Ej. 14072059" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Teléfono</label>
+          <input type="text" id="telefono" placeholder="Ej. 04123749197" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
         </div>
 
-        <div class="grid grid-cols-3 gap-2">
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Tipo</label>
-            <select id="tipo_cedula" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500">
-              <option value="V-">V-</option>
-              <option value="E-">E-</option>
-            </select>
-          </div>
-          <div class="col-span-2">
-            <label class="block text-xs font-medium text-slate-400 mb-1">Nº Cédula / Identificación</label>
-            <input type="text" id="cedula" required placeholder="34876982" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500">
-          </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Rol / Cargo Institucional</label>
+          <select id="rol" onchange="evaluarCampoContrasena()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+            <option value="Super Administrador">Super Administrador</option>
+            <option value="Personal Directivo">Personal Directivo</option>
+            <option value="Personal Administrativo">Personal Administrativo</option>
+            <option value="Docente / Profesor">Docente / Profesor</option>
+            <option value="Estudiante / Alumno">Estudiante / Alumno</option>
+            <option value="Personal Obrero">Personal Obrero</option>
+            <option value="Cocina / CNAE">Cocina / CNAE</option>
+            <option value="Portero">Portero</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- CAMPO DE CONTRASEÑA DE ACCESO -->
+      <div id="contenedorContrasena">
+        <label class="block text-xs font-bold text-blue-400 mb-1">🔑 Contraseña de Acceso al Sistema</label>
+        <input type="password" id="contrasena" placeholder="Cree una contraseña (alfanumérica, asteriscos, puntos...)" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+        <p class="text-[10px] text-slate-500 mt-1">Requerido para ingresar a los módulos asignados según su rol.</p>
+      </div>
+
+      <button onclick="guardarUsuario()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-blue-600/20">
+        Guardar Usuario y Generar Carnet
+      </button>
+    </div>
+
+    <!-- VISTA PREVIA DEL CARNET DIGITAL -->
+    <div class="flex flex-col items-center justify-center space-y-4">
+      <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Carnet Digital Generado</h2>
+
+      <div id="carnetVista" class="w-80 h-[420px] bg-gradient-to-b from-slate-900 to-blue-950 border border-blue-800/60 rounded-2xl p-6 flex flex-col items-center justify-between shadow-2xl relative overflow-hidden">
+        
+        <div class="text-center w-full z-10 border-b border-blue-800/40 pb-3">
+          <h3 class="text-sm font-black text-white tracking-widest uppercase">E.B.N EL PARDILLO</h3>
+          <p class="text-[9px] font-bold text-blue-400 tracking-wider">CARNET OFICIAL DE IDENTIFICACIÓN</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Teléfono</label>
-            <input type="text" id="telefono" placeholder="04140319909" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Rol / Cargo Institucional</label>
-            <select id="rol" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500">
-              <option value="Estudiante / Alumno">Estudiante / Alumno</option>
-              <option value="Docente / Profesor">Docente / Profesor</option>
-              <option value="Personal Administrativo">Personal Administrativo</option>
-              <option value="Personal Obrero">Personal Obrero</option>
-            </select>
-          </div>
+        <div class="text-center w-full z-10 my-2">
+          <h4 id="carnetNombre" class="text-base font-bold text-white">Nombre y Apellido</h4>
+          <p id="carnetCedula" class="text-xs font-mono text-blue-300 font-semibold">V-00000000</p>
+          <span id="carnetRol" class="inline-block mt-1 px-3 py-0.5 bg-blue-950 border border-blue-700 text-blue-300 rounded-full text-[10px] font-bold">Sin Rol</span>
         </div>
 
-        <div id="campoEstudiante" class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Año Escolar</label>
-            <select id="ano_escolar" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500">
-              <option value="">Seleccione...</option>
-              <option value="1er Grado">1er Grado</option>
-              <option value="2do Grado">2do Grado</option>
-              <option value="3er Grado">3er Grado</option>
-              <option value="4to Grado">4to Grado</option>
-              <option value="5to Grado">5to Grado</option>
-              <option value="6to Grado">6to Grado</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Sección</label>
-            <select id="seccion" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500">
-              <option value="">Seleccione...</option>
-              <option value="A">Sección A</option>
-              <option value="B">Sección B</option>
-              <option value="C">Sección C</option>
-              <option value="D">Sección D</option>
-              <option value="E">Sección E</option>
-              <option value="F">Sección F</option>
-              <option value="G">Sección G</option>
-              <option value="H">Sección H</option>
-              <option value="U">Única</option>
-            </select>
-          </div>
+        <!-- CÓDIGO QR -->
+        <div class="bg-white p-3 rounded-xl shadow-md z-10 flex items-center justify-center">
+          <div id="qrcode"></div>
         </div>
 
-        <button type="submit" id="btnSubmit" class="w-full mt-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
-          Guardar Usuario y Generar Carnet
+        <div class="text-center z-10">
+          <p class="text-[9px] text-slate-400 font-semibold">Acceso QR EBP</p>
+        </div>
+      </div>
+
+      <!-- BOTONES DE DESCARGA -->
+      <div class="flex gap-3 w-80">
+        <button onclick="descargarCarnet()" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition">
+          Descargar Carnet
         </button>
-      </form>
-    </section>
-
-    <!-- Vista Previa del Carnet -->
-    <section class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 flex flex-col items-center justify-center">
-      <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4 w-full border-b border-slate-800 pb-2 text-left">Carnet Digital Generado</h2>
-
-      <!-- Tarjeta Carnet -->
-      <div id="carnetTarjeta" class="w-[320px] bg-gradient-to-br from-slate-900 via-blue-950 to-slate-950 p-5 rounded-2xl border border-blue-500/40 shadow-2xl text-center relative overflow-hidden my-2">
-        <p class="text-[10px] font-bold text-blue-400 tracking-widest uppercase mb-1">ESCUELA BASICA NACIONAL EL PARDILLO</p>
-        <p class="text-[8px] text-slate-400 uppercase mb-4">Carnet Oficial de Identificación</p>
-
-        <div class="my-3">
-          <h3 id="carnetNombre" class="text-base font-bold text-slate-100 capitalize">--- ---</h3>
-          <p id="carnetCedula" class="text-xs font-mono text-blue-400 mt-0.5">---</p>
-          <p id="carnetCargo" class="text-[11px] text-slate-300 font-medium mt-1">---</p>
-          <p id="carnetDetalle" class="text-[10px] text-slate-400">---</p>
-        </div>
-
-        <!-- Contenedor del Código QR en Vivo -->
-        <div class="flex justify-center my-4">
-          <div id="qrcode" class="bg-white p-2 rounded-xl shadow-lg min-w-[120px] min-h-[120px] flex items-center justify-center"></div>
-        </div>
-
-        <p class="text-[8px] text-slate-500">Acceso QR CEG</p>
       </div>
-
-      <!-- Botones de Acción -->
-      <div class="flex gap-3 mt-4 w-full max-w-[320px]">
-        <button type="button" onclick="descargarCarnet()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-xs py-2 rounded-xl font-medium border border-slate-700 transition">Descargar Carnet</button>
-        <button type="button" onclick="descargarSoloQR()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-xs py-2 rounded-xl font-medium border border-slate-700 transition">Descargar Solo QR</button>
-      </div>
-    </section>
+    </div>
 
   </main>
 
   <script>
     const SUPABASE_URL = "https://kikslsumraitoujacew.supabase.co";
-const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
+    const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let qrObj = null;
+    let qrCodeObj = null;
 
-    window.addEventListener('load', function() {
-      // Eventos 'input' y 'change' en todos los campos para actualizar en vivo
-      const ids = ['nombre_apellido', 'tipo_cedula', 'cedula', 'rol', 'ano_escolar', 'seccion'];
-      ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.addEventListener('input', actualizarCarnet);
-          el.addEventListener('change', actualizarCarnet);
-        }
+    window.addEventListener('load', () => {
+      qrCodeObj = new QRCode(document.getElementById("qrcode"), {
+        text: "EBP-OFICIAL",
+        width: 100,
+        height: 100
       });
-
-      document.getElementById("registroForm").addEventListener("submit", procesarRegistro);
-      actualizarCarnet();
+      evaluarCampoContrasena();
     });
 
-    function actualizarCarnet() {
-      const nombre = document.getElementById("nombre_apellido")?.value.trim() || "Nombre y Apellido";
-      const tipoCedula = document.getElementById("tipo_cedula")?.value || "V-";
-      const numCedula = document.getElementById("cedula")?.value.trim() || "";
-      const rol = document.getElementById("rol")?.value || "Estudiante / Alumno";
-      const ano = document.getElementById("ano_escolar")?.value || "";
-      const seccion = document.getElementById("seccion")?.value || "";
+    function evaluarCampoContrasena() {
+      const rol = document.getElementById("rol").value;
+      const contenedor = document.getElementById("contenedorContrasena");
+      const inputClave = document.getElementById("contrasena");
 
-      // Ajustar visibilidad de campos de estudiante
-      const campoEst = document.getElementById("campoEstudiante");
-      if (campoEst) {
-        if (rol === "Estudiante / Alumno") {
-          campoEst.classList.remove("hidden");
-        } else {
-          campoEst.classList.add("hidden");
-        }
-      }
+      // Roles que SÍ requieren contraseña de acceso
+      const rolesConClave = ["Super Administrador", "Portero" "Personal Directivo", "Personal Administrativo", "Docente / Profesor"];
 
-      // Texto para el QR (Ej: V-34876982 o el número directo)
-      const cedulaCompleta = numCedula !== "" ? `${tipoCedula}${numCedula}` : "CEG-PENDIENTE";
-
-      // Actualizar interfaz del carnet
-      if (document.getElementById("carnetNombre")) document.getElementById("carnetNombre").innerText = nombre;
-      if (document.getElementById("carnetCedula")) document.getElementById("carnetCedula").innerText = numCedula !== "" ? cedulaCompleta : "---";
-      if (document.getElementById("carnetCargo")) document.getElementById("carnetCargo").innerText = rol;
-      
-      const elDetalle = document.getElementById("carnetDetalle");
-      if (elDetalle) {
-        if (rol === "Estudiante / Alumno") {
-          elDetalle.innerText = (ano || '---') + " " + (seccion ? ('(' + seccion + ')') : '');
-        } else {
-          elDetalle.innerText = "";
-        }
-      }
-
-      // Re-generar Código QR en vivo
-      const qrBox = document.getElementById("qrcode");
-      if (qrBox) {
-        qrBox.innerHTML = "";
-        new QRCode(qrBox, {
-          text: cedulaCompleta,
-          width: 110,
-          height: 110,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.H
-        });
+      if (rolesConClave.includes(rol)) {
+        contenedor.style.display = "block";
+        inputClave.disabled = false;
+      } else {
+        contenedor.style.display = "none";
+        inputClave.disabled = true;
+        inputClave.value = ""; // Limpia la clave si el rol no la requiere
       }
     }
 
-    async function procesarRegistro(e) {
-      e.preventDefault();
-      
-      const btn = document.getElementById("btnSubmit");
-      btn.disabled = true;
-      btn.innerText = "Guardando...";
-
+    async function guardarUsuario() {
       const nombre = document.getElementById("nombre_apellido").value.trim();
-      const tipoCedula = document.getElementById("tipo_cedula").value;
-      const numCedula = document.getElementById("cedula").value.trim();
+      const tipoCed = document.getElementById("tipo_cedula").value;
+      const numCed = document.getElementById("cedula").value.trim();
       const telefono = document.getElementById("telefono").value.trim();
       const rol = document.getElementById("rol").value;
-      const anoEscolar = document.getElementById("ano_escolar")?.value || null;
-      const seccion = document.getElementById("seccion")?.value || null;
+      const contrasena = document.getElementById("contrasena").value.trim();
 
-      const cedulaFinal = `${tipoCedula}${numCedula}`;
+      const cedulaCompleta = `${tipoCed}${numCed}`;
 
-      const payload = {
+      if (!nombre || !numCed) {
+        alert("Por favor ingrese el Nombre y la Cédula del usuario.");
+        return;
+      }
+
+      const rolesConClave = ["Super Administrador", "Personal Directivo", "Personal Administrativo", "Docente / Profesor"];
+      if (rolesConClave.includes(rol) && !contrasena) {
+        alert("El rol seleccionado requiere una contraseña de acceso.");
+        return;
+      }
+
+      const datosUsuario = {
+        cedula: cedulaCompleta,
         nombre_apellido: nombre,
-        cedula: cedulaFinal,
         telefono: telefono,
         rol: rol,
-        grado: anoEscolar,
-        seccion: seccion
+        contrasena: contrasena !== "" ? contrasena : null
       };
 
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "apikey": API_KEY,
-            "Authorization": `Bearer ${API_KEY}`,
-            "Prefer": "return=minimal"
-          },
-          body: JSON.stringify(payload)
-        });
+      const { error } = await _supabase
+        .from('registro_general')
+        .insert([datosUsuario]);
 
-        if (res.ok) {
-          alert("✅ Registro guardado exitosamente en Supabase.");
-          document.getElementById("registroForm").reset();
-          actualizarCarnet();
-        } else {
-          const errData = await res.json();
-          alert("❌ Error guardando registro: " + (errData.message || "Verifique los datos"));
-        }
-      } catch (err) {
-        alert("❌ Error de conexión con el servidor.");
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Guardar Usuario y Generar Carnet";
+      if (error) {
+        console.error("Error al registrar:", error);
+        alert("Error al registrar usuario: " + error.message);
+        return;
       }
+
+      alert("¡Usuario guardado con éxito en Supabase!");
+
+      // Actualizar Vista Previa del Carnet
+      document.getElementById("carnetNombre").innerText = nombre;
+      document.getElementById("carnetCedula").innerText = cedulaCompleta;
+      document.getElementById("carnetRol").innerText = rol;
+
+      qrCodeObj.clear();
+      qrCodeObj.makeCode(cedulaCompleta);
     }
 
     function descargarCarnet() {
-      const elem = document.getElementById("carnetTarjeta");
-      const ced = document.getElementById("cedula").value.trim() || "carnet";
-      html2canvas(elem, { scale: 2, backgroundColor: null }).then(canvas => {
-        const a = document.createElement("a");
-        a.download = "Carnet_CEG_" + ced + ".png";
-        a.href = canvas.toDataURL("image/png");
-        a.click();
+      html2canvas(document.getElementById("carnetVista")).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `Carnet_${document.getElementById("carnetCedula").innerText}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
       });
-    }
-
-    function descargarSoloQR() {
-      const qrCanvas = document.querySelector("#qrcode canvas");
-      const ced = document.getElementById("cedula").value.trim() || "qr";
-      if (!qrCanvas) {
-        alert("Escriba la cédula para generar el QR primero.");
-        return;
-      }
-      const a = document.createElement("a");
-      a.download = "QR_CEG_" + ced + ".png";
-      a.href = qrCanvas.toDataURL("image/png");
-      a.click();
     }
   </script>
 </body>
