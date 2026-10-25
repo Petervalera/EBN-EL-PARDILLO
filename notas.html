@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carga de Notas - C.E. Guaicaipuro</title>
+  <title>Carga de Notas - U.E.N EL PARDILLO</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -29,7 +29,7 @@
       Volver al Menú
     </a>
     <div class="text-right">
-      <h1 class="text-2xl font-extrabold tracking-wide text-white">C.E. GUAICAIPURO</h1>
+      <h1 class="text-2xl font-extrabold tracking-wide text-white">U.E.N EL PARDILLO</h1>
       <p class="text-xs font-bold text-fuchsia-400 tracking-wider">GESTIÓN ACADÉMICA Y CARGA DE 5 EVALUACIONES</p>
     </div>
   </header>
@@ -60,11 +60,12 @@
         <div>
           <label class="block text-[11px] font-bold text-slate-300 mb-1.5 uppercase">Graduación / Año</label>
           <select id="selectGraduacion" onchange="cargarEstudiantes()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-fuchsia-500">
-            <option value="1er Año">1er Año</option>
-            <option value="2do Año">2do Año</option>
-            <option value="3er Año">3er Año</option>
-            <option value="4to Año" selected>4to Año</option>
-            <option value="5to Año">5to Año</option>
+            <option value="1er Grado">1er Grado</option>
+            <option value="2do Grado">2do Grado</option>
+            <option value="3er Grado">3er Grado</option>
+            <option value="4to Grado" selected>4to Grado</option>
+            <option value="5to Grado">5to Grado</option>
+            <option value="6to Grado">6to Grado</option>
           </select>
         </div>
 
@@ -181,8 +182,8 @@
   </main>
 
   <script>
-    const SUPABASE_URL = "https://dampbjspktpcffqpuiuz.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_raLpaXN3c1UpS4mHFvWkTQ_YNbtB3Q5";
+    const SUPABASE_URL = "https://kikslsumraitoujacew.supabase.co";
+const SUPABASE_KEY = "sb_publishable_8S5EQ4CJ1MdREtO-bzt6Xg_ebyfAoT7";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let estudiantesCargados = [];
